@@ -68,7 +68,7 @@ assets.reload().unwrap();
 - Lastly you can access the assets in the tree safely and easily
 ```rust
 let house_texture = assets.textures.house;
-let blueprint = assets.blueprints[0];
+let blueprint = assets.blueprints.iter_nodes(); //or <&BlueprintsFolder as IntoIterator>::into_iter() to only get values
 ```
 
 ## Example(s)
