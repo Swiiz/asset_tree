@@ -13,7 +13,7 @@ Also supports `#[no_std]` environments and provide the ability to define custom 
 - Ability to load/reload any part of the asset tree when needed
 - Ability to check the integrity of the asset tree when needed
 - Runtime asset tree data/bound representation
-- Error handling and unused assets logging for easier debugging
+- Error handling and unused assets logging for easier debugging (can be disabled using the `no_log` feature)
 - Custom file types with loader independent logic
 - Minimal runtime logic
 

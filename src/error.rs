@@ -1,6 +1,6 @@
 use core::fmt::Debug;
 
-use alloc::{boxed::Box, string::String, vec::Vec};
+use alloc::{boxed::Box, string::String};
 
 pub struct Error<T: core::error::Error> {
     parent: String,
