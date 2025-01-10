@@ -3,7 +3,7 @@
 ## Rust library to easily load/check/access assets using trees and macros.
 
 Allows for static and dynamic file hierarchies loading, integrity checking, reloading and more with minimal runtime logic using the rust type system.</br>
-Also support `#[no_std]` environments and provide the ability to define custom asset tree loaders (for virtual file systems/embedded platforms...).
+Also supports `#[no_std]` environments and provide the ability to define custom asset tree loaders (for virtual file systems/embedded platforms...).
 
 ## Features
 
@@ -14,7 +14,7 @@ Also support `#[no_std]` environments and provide the ability to define custom a
 - Ability to check the integrity of the asset tree when needed
 - Runtime asset tree data/bound representation
 - Error handling and unused assets logging for easier debugging
-- Custom file types with loader independant logic
+- Custom file types with loader independent logic
 - Minimal runtime logic
 
 ## Usage
