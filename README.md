@@ -51,7 +51,7 @@ asset_tree! {
 - You can now check the integrity of the asset tree / load it using the root struct (AssetsFolder).
 ```rust
 // Checks the integrity of the asset tree
-let missing = check_integrity(&assets::AssetsFolder::asset_tree(), ctx).unwrap();
+let missing = check_integrity(&AssetsFolder::asset_tree(), ctx).unwrap();
 if !missing.is_empty() {
     panic!("Missing assets: {:?}", missing);
 }
