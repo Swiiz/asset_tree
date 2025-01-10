@@ -1,0 +1,10 @@
+[package]
+name = "asset_tree"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+no_log = []
+
+[dependencies]
+paste = "1.0.15"
