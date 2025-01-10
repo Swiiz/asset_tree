@@ -8,7 +8,7 @@ Also support `#[no_std]` environments and provide the ability to define custom a
 ## Features
 
 - Easy to use macro to statically define asset trees
-- `StdOsLoader` for loading assets from the file system + ability to define custom loaders for virtual asset trees
+- `StdOsLoader` for loading assets from the file system + ability to define custom asset loaders
 - Support for `#[no_std]` environment. (with `alloc` dependency)
 - Ability to load/reload any part of the asset tree when needed
 - Ability to check the integrity of the asset tree when needed
