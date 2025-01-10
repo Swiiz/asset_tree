@@ -83,7 +83,7 @@ macro_rules! asset_files {
             }
             fn load<L: $crate::loader::AssetLoader>(ctx: &L) -> $crate::Result<Self, L::Error> {
                 let data = ctx.load_file($ext)?;
-                let obj = data.try_into().map_err(|e| $crate::Error::deserialization(ctx.current_path().to_path_buf(), Box::new(e)))?;
+                let obj = data.try_into().map_err(|e| $crate::Error::deserialization(ctx.current_location().clone(), Box::new(e)))?;
                 Ok(obj)
             }
         }

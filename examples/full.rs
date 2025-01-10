@@ -1,16 +1,21 @@
-use asset_tree::{
-    asset_tree, builtin,
-    loader::{AssetLoader, StdOsLoader},
-    Asset, StaticAssetFolder,
+#[allow(unused_imports)]
+use {
+    asset_tree::{
+        asset_tree, builtin, check_integrity, loader::AssetLoader, Asset, StaticAssetFolder,
+    },
+    files::*,
 };
-use files::*;
 
+#[cfg(not(feature = "no_std"))]
+use asset_tree::loader::StdOsLoader;
+
+#[cfg(not(feature = "no_std"))]
 fn main() {
-    let ctx = StdOsLoader::new("examples/assets").unwrap();
+    let ctx = StdOsLoader::new("examples/assets".into()).unwrap();
     let mut assets = assets::AssetsFolder::load(&ctx).unwrap();
 
     loop {
-        assets.reload(&ctx).unwrap(); // Assets can be reloaded at any time
+        assets.reload(&ctx).unwrap();
 
         println!("Shader source: {}", assets.shaders.my_shader.source_code);
         println!(
@@ -35,9 +40,14 @@ fn main() {
         );
 
         println!(
-            "Press enter to reload assets. Debug log can be turned off using the no_log feature."
+            "Press enter to reload assets. Debug logs can be turned off/on using the no_log feature or the `set_debug_log` function."
         );
         let _ = std::io::stdin().read_line(&mut String::new());
+
+        let missing = check_integrity(&assets::AssetsFolder::asset_tree(), &ctx).unwrap();
+        if !missing.is_empty() {
+            panic!("Missing assets: {:?}", missing);
+        }
     }
 }
 
@@ -100,4 +110,9 @@ pub mod files {
             Json
         }
     }
+}
+
+#[cfg(feature = "no_std")]
+fn main() {
+    panic!("The example doesn't support std, you need to write your own loader using the AssetLoader trait");
 }

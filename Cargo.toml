@@ -5,6 +5,15 @@ edition = "2021"
 
 [features]
 no_log = []
+no_std = ["dep:hashbrown"]
+
+default = []
+
+[[example]]
+name = "full"
+required-features = ["default"]
 
 [dependencies]
 paste = "1.0.15"
+
+hashbrown = { optional = true, version = "0.15" }

@@ -1,3 +1,12 @@
+#![cfg_attr(feature = "no_std", no_std)]
+
+extern crate alloc;
+use alloc::{
+    format,
+    string::{String, ToString},
+    vec::Vec,
+};
+
 pub mod builtin;
 mod error;
 pub mod loader;
@@ -6,12 +15,12 @@ mod macros;
 #[doc(hidden)]
 pub use paste::paste;
 
-pub use error::Error;
-pub type Result<T, E> = std::result::Result<T, Error<E>>;
+pub use error::{Error, ErrorKind};
+pub type Result<T, E> = core::result::Result<T, Error<E>>;
 
 #[cfg(not(feature = "no_log"))]
 #[doc(hidden)]
-pub static DEBUG_LOG: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new({
+pub static DEBUG_LOG: core::sync::atomic::AtomicBool = core::sync::atomic::AtomicBool::new({
     #[cfg(debug_assertions)]
     let b = true;
     #[cfg(any(not(debug_assertions)))]
@@ -34,18 +43,18 @@ macro_rules! log {
 }
 pub(crate) use log;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct AssetFileType {
     pub extension: String,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct AssetTreeNode<T = AssetBound> {
     pub name: String,
     pub inner: T,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum AssetBound {
     File {
         ty: AssetFileType,
@@ -75,7 +84,7 @@ pub trait Asset: Sized {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum AssetProperties {
     File {
         ext: String,
@@ -101,4 +110,29 @@ impl AssetProperties {
             _ => false,
         }
     }
+}
+
+pub fn check_integrity<L: loader::AssetLoader>(
+    tree: &AssetTreeNode,
+    ctx: &L,
+) -> Result<Vec<String>, L::Error> {
+    let mut missing = Vec::new();
+
+    match tree.inner {
+        AssetBound::File {
+            ty: AssetFileType { ref extension },
+            ..
+        } => {
+            if !ctx.check_file(extension)? {
+                missing.push(format!("{}.{}", ctx.current_location(), extension));
+            }
+        }
+        AssetBound::Directory { ref defined, .. } => {
+            for node in defined {
+                missing.extend(check_integrity(&node, &ctx.subdir(&node.name))?);
+            }
+        }
+    }
+
+    Ok(missing)
 }

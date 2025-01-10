@@ -1,6 +1,17 @@
-use std::collections::HashMap;
+use alloc::string::{String, ToString};
 
-use crate::{loader::AssetLoader, log, Asset, AssetBound, AssetTreeNode, Result};
+#[allow(unused_imports)]
+use crate::{loader::AssetLoader, log, Asset, AssetBound, AssetTreeNode, Error, ErrorKind, Result};
+
+#[cfg(not(feature = "no_std"))]
+type HashMap<K, V> = std::collections::HashMap<K, V>;
+#[cfg(feature = "no_std")]
+type HashMap<K, V> = hashbrown::HashMap<K, V>;
+
+#[cfg(not(feature = "no_std"))]
+type Values<'a, K, V> = std::collections::hash_map::Values<'a, K, V>;
+#[cfg(feature = "no_std")]
+type Values<'a, K, V> = hashbrown::hash_map::Values<'a, K, V>;
 
 pub struct Folder<T> {
     elems: HashMap<String, T>,
@@ -9,8 +20,8 @@ pub struct Folder<T> {
 impl<T: Asset> Asset for Folder<T> {
     fn bound() -> AssetBound {
         AssetBound::Directory {
-            collect: vec![T::bound()],
-            defined: vec![],
+            collect: [T::bound()].into(),
+            defined: [].into(),
         }
     }
 
@@ -26,7 +37,7 @@ impl<T: Asset> Asset for Folder<T> {
                         } else {
                             log!(
                                 "Skipping non-matching asset: {}{}{}",
-                                ctx.current_path().display(),
+                                ctx.current_location(),
                                 std::path::MAIN_SEPARATOR,
                                 node.name
                             );
@@ -61,7 +72,7 @@ impl<T: Asset> Folder<T> {
 
 impl<'a, T: 'static> IntoIterator for &'a Folder<T> {
     type Item = &'a T;
-    type IntoIter = std::collections::hash_map::Values<'a, String, T>;
+    type IntoIter = Values<'a, String, T>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.elems.values()

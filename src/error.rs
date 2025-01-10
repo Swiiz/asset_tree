@@ -1,24 +1,26 @@
-use std::{fmt::Debug, path::PathBuf};
+use core::fmt::Debug;
 
-pub struct Error<T: std::error::Error> {
-    parent: PathBuf,
-    kind: ErrorKind<T>,
+use alloc::{boxed::Box, string::String, vec::Vec};
+
+pub struct Error<T: core::error::Error> {
+    parent: String,
+    pub kind: ErrorKind<T>,
 }
 
 pub enum ErrorKind<T> {
     Loader(T),
-    Deserialization(Box<dyn std::error::Error>),
+    Deserialization(Box<dyn core::error::Error>),
 }
 
-impl<T: std::error::Error> Error<T> {
-    pub fn deserialization(parent: PathBuf, error: Box<dyn std::error::Error>) -> Error<T> {
+impl<T: core::error::Error> Error<T> {
+    pub fn deserialization(parent: String, error: Box<dyn core::error::Error>) -> Error<T> {
         Error {
             parent,
             kind: ErrorKind::Deserialization(error),
         }
     }
 
-    pub fn loader(parent: PathBuf, error: T) -> Error<T> {
+    pub fn loader(parent: String, error: T) -> Error<T> {
         Error {
             parent,
             kind: ErrorKind::Loader(error),
@@ -26,28 +28,23 @@ impl<T: std::error::Error> Error<T> {
     }
 }
 
-impl<T: std::error::Error> std::fmt::Display for Error<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl<T: core::error::Error> core::fmt::Display for Error<T> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match &self.kind {
             ErrorKind::Loader(e) => {
-                write!(f, "Error loading asset at {}: {}", self.parent.display(), e)
+                write!(f, "Error loading asset at {}: {}", self.parent, e)
             }
             ErrorKind::Deserialization(e) => {
-                write!(
-                    f,
-                    "Error deserializing asset at {}: {}",
-                    self.parent.display(),
-                    e
-                )
+                write!(f, "Error deserializing asset at {}: {}", self.parent, e)
             }
         }
     }
 }
 
-impl<T: std::error::Error> Debug for Error<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        <Self as std::fmt::Display>::fmt(self, f)
+impl<T: core::error::Error> Debug for Error<T> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        <Self as core::fmt::Display>::fmt(self, f)
     }
 }
 
-impl<T: std::error::Error> std::error::Error for Error<T> {}
+impl<T: core::error::Error> core::error::Error for Error<T> {}
