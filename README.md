@@ -25,8 +25,8 @@ Also support `#[no_std]` environments and provide the ability to define custom a
 asset_tree = { git = "https://github.com/Swiiz/asset_tree" }
 ```
 
-- Define your file types (This will implement the Asset trait for each file type)
-  ⚠ For this to work you need to implement `From<Vec<u8>>` or `TryFrom<Vec<u8>>` for each file type.
+- Define your file types (This will implement the Asset trait for each file type)</br>
+⚠ For this to work you need to implement `From<Vec<u8>>` or `TryFrom<Vec<u8>>` for each file type.
 ```rust
 asset_files! {
   Texture : "png",
@@ -34,8 +34,8 @@ asset_files! {
 }
 ```
 
-- Define your asset tree (This generates a AssetsFolder, TexturesFolder and BlueprintsFolder types with their respective fields)
-  ℹ The `builtin::Folder` type will automatically collect all assets in the subfolder matching the generic asset.
+- Define your asset tree (This generates a AssetsFolder, TexturesFolder and BlueprintsFolder types with their respective fields)</br>
+ℹ The `builtin::Folder` type will automatically collect all assets in the subfolder matching the generic asset.
 ```rust
 asset_tree! {
     assets {
