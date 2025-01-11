@@ -2,7 +2,7 @@ use core::fmt::Debug;
 
 use alloc::{boxed::Box, string::String};
 
-pub struct Error<T: core::error::Error> {
+pub struct Error<T: core::error::Error + Send + Sync + 'static> {
     parent: String,
     pub kind: ErrorKind<T>,
 }
@@ -12,7 +12,7 @@ pub enum ErrorKind<T> {
     Deserialization(Box<dyn core::error::Error + Send + Sync>),
 }
 
-impl<T: core::error::Error> Error<T> {
+impl<T: core::error::Error + Send + Sync + 'static> Error<T> {
     pub fn deserialization(
         parent: String,
         error: Box<dyn core::error::Error + Send + Sync>,
@@ -31,7 +31,7 @@ impl<T: core::error::Error> Error<T> {
     }
 }
 
-impl<T: core::error::Error> core::fmt::Display for Error<T> {
+impl<T: core::error::Error + Send + Sync + 'static> core::fmt::Display for Error<T> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match &self.kind {
             ErrorKind::Loader(e) => {
@@ -44,10 +44,10 @@ impl<T: core::error::Error> core::fmt::Display for Error<T> {
     }
 }
 
-impl<T: core::error::Error> Debug for Error<T> {
+impl<T: core::error::Error + Send + Sync + 'static> Debug for Error<T> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         <Self as core::fmt::Display>::fmt(self, f)
     }
 }
 
-impl<T: core::error::Error> core::error::Error for Error<T> {}
+impl<T: core::error::Error + Send + Sync + 'static> core::error::Error for Error<T> {}
