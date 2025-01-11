@@ -9,11 +9,14 @@ pub struct Error<T: core::error::Error> {
 
 pub enum ErrorKind<T> {
     Loader(T),
-    Deserialization(Box<dyn core::error::Error>),
+    Deserialization(Box<dyn core::error::Error + Send + Sync>),
 }
 
 impl<T: core::error::Error> Error<T> {
-    pub fn deserialization(parent: String, error: Box<dyn core::error::Error>) -> Error<T> {
+    pub fn deserialization(
+        parent: String,
+        error: Box<dyn core::error::Error + Send + Sync>,
+    ) -> Error<T> {
         Error {
             parent,
             kind: ErrorKind::Deserialization(error),
