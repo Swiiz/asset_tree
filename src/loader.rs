@@ -7,7 +7,7 @@ use crate::{log, AssetProperties, AssetTreeNode, Error, Result};
 use std::path::{Path, PathBuf};
 
 pub trait AssetLoader: Sized {
-    type Error: core::error::Error + Send + Sync;
+    type Error: core::error::Error + Send + Sync + 'static;
     fn new(root: String) -> Result<Self, Self::Error>;
     fn current_location(&self) -> String;
     fn subdir(&self, name: &str) -> Self;
